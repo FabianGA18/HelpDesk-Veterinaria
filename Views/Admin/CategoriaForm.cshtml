@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Categoría";
+    ViewData["Heading"] = "Administración";
+    int? id = null; // TODO: Model.Id
+}
+<a class="back" asp-action="Categorias">← Volver a categorías</a>
+<form class="card page-narrow" method="post" asp-action="GuardarCategoria" asp-route-id="@id" novalidate>
+    <h2 style="margin-bottom:18px">@(id is null ? "Nueva" : "Editar") categoría</h2>
+    <div class="field"><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" maxlength="40"></div>
+    @if (id is not null)
+    {
+        <div class="field">
+            <label for="Activa">Estado</label>
+            <select id="Activa" name="Activa"><option value="true">Activa</option><option value="false">Inactiva</option></select>
+        </div>
+    }
+    <div class="form-actions"><a class="btn ghost" asp-action="Categorias">Cancelar</a><button class="btn" type="submit">Guardar</button></div>
+</form>

@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Crear tiquete";
+    ViewData["Heading"] = "Portal del solicitante";
+}
+@section Scripts {
+    <script src="~/js/crear-tiquete.js" asp-append-version="true"></script>
+}
+
+<div class="tabs">
+    <a class="tab on" asp-action="Crear">Crear tiquete</a>
+    <a class="tab" asp-action="Mis">Mis tiquetes</a>
+</div>
+
+<form class="card page-narrow" method="post" enctype="multipart/form-data" asp-action="Crear" id="form-crear" novalidate>
+    <h2 style="margin-bottom:18px">Crear tiquete</h2>
+
+    <div class="field">
+        <label for="Asunto">Asunto</label>
+        <input id="Asunto" name="Asunto" maxlength="120" placeholder="Resume el problema en una línea">
+    </div>
+    <div class="field">
+        <label for="Categoria">Categoría</label>
+        <select id="Categoria" name="CategoriaId">
+            <option value="">Selecciona una categoría</option>
+            @* TODO: @foreach (var c in Model.Categorias) { <option value="@c.Id">@c.Nombre</option> } *@
+            <option>Acceso</option><option>Datos de mascotas</option><option>Agenda de citas</option><option>Equipos médicos</option><option>Inventario</option><option>Laboratorio</option>
+        </select>
+    </div>
+    <div class="field">
+        <label for="Descripcion">Descripción</label>
+        <textarea id="Descripcion" name="Descripcion" placeholder="¿Qué ocurre, desde cuándo y a quién afecta?"></textarea>
+    </div>
+    <div class="field">
+        <label>Evidencia <small>(PDF, JPG o PNG, máx. 10 MB)</small></label>
+        <div class="drop" id="drop" tabindex="0" role="button">Arrastra archivos aquí o <b>elige archivos</b></div>
+        <input type="file" id="evidencias" name="Evidencias" multiple accept=".pdf,.jpg,.jpeg,.png" class="sr" tabindex="-1">
+        <div class="files" id="lista-archivos"></div>
+    </div>
+
+    <div class="err" role="alert" id="error-form"></div>
+    <div class="form-actions">
+        <a class="btn ghost" asp-action="Mis">Cancelar</a>
+        <button class="btn" type="submit">Enviar tiquete</button>
+    </div>
+</form>

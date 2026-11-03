@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Usuario";
+    ViewData["Heading"] = "Administración";
+    int? id = null; // TODO: Model.Id
+}
+<a class="back" asp-action="Usuarios">← Volver a usuarios</a>
+<form class="card page-narrow" method="post" asp-action="GuardarUsuario" asp-route-id="@id" novalidate>
+    <h2 style="margin-bottom:18px">@(id is null ? "Nuevo" : "Editar") usuario</h2>
+    <div class="field"><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre"></div>
+    <div class="field"><label for="Correo">Correo</label><input id="Correo" name="Correo" type="email"></div>
+    <div class="field">
+        <label for="Rol">Rol</label>
+        <select id="Rol" name="Rol"><option>Solicitante</option><option>Soporte</option><option>Administrador</option></select>
+    </div>
+    @if (id is not null)
+    {
+        <div class="field">
+            <label for="Activo">Estado</label>
+            <select id="Activo" name="Activo"><option value="true">Activo</option><option value="false">Inactivo</option></select>
+        </div>
+    }
+    <div class="form-actions"><a class="btn ghost" asp-action="Usuarios">Cancelar</a><button class="btn" type="submit">Guardar</button></div>
+</form>

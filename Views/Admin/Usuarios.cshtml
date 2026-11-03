@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Usuarios y roles";
+    ViewData["Heading"] = "Administración";
+}
+<div class="tabs">
+    <a class="tab" asp-action="Categorias">Categorías</a>
+    <a class="tab on" asp-action="Usuarios">Usuarios y roles</a>
+    <a class="tab" asp-action="Prioridad">Tiquetes por prioridad</a>
+</div>
+
+<div class="card">
+    <div class="card-h"><h2>Usuarios y roles</h2><a class="btn" asp-action="UsuarioForm">Nuevo usuario</a></div>
+    <div class="thead cols-usr"><span>Nombre</span><span>Correo</span><span>Rol</span><span>Estado</span><span></span></div>
+    <div class="drow cols-usr"><b>Juan Guillermo</b><span style="word-break:break-all">jguillermo@@empresa.com</span><span><span class="pill role">Soporte</span></span><span class="status-ok"><i></i>Activo</span><a class="btn ghost sm" asp-action="UsuarioForm" asp-route-id="1">Editar</a></div>
+    <div class="drow cols-usr"><b>Laura Vega</b><span style="word-break:break-all">lvega@@empresa.com</span><span><span class="pill role">Soporte</span></span><span class="status-ok"><i></i>Activo</span><a class="btn ghost sm" asp-action="UsuarioForm" asp-route-id="2">Editar</a></div>
+    <div class="drow cols-usr"><b>Marta Solís</b><span style="word-break:break-all">msolis@@empresa.com</span><span><span class="pill role">Solicitante</span></span><span class="status-ok"><i></i>Activo</span><a class="btn ghost sm" asp-action="UsuarioForm" asp-route-id="3">Editar</a></div>
+    <div class="drow cols-usr"><b>Ana Mora</b><span style="word-break:break-all">amora@@empresa.com</span><span><span class="pill role">Administrador</span></span><span class="status-ok"><i></i>Activo</span><a class="btn ghost sm" asp-action="UsuarioForm" asp-route-id="4">Editar</a></div>
+</div>

@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Mis tiquetes";
+    ViewData["Heading"] = "Portal del solicitante";
+}
+<div class="tabs">
+    <a class="tab" asp-action="Crear">Crear tiquete</a>
+    <a class="tab on" asp-action="Mis">Mis tiquetes</a>
+</div>
+
+@* Solo los tiquetes del usuario autenticado (RNF-03) *@
+<div class="list">
+        <a class="trow p-alta" asp-controller="Tickets" asp-action="Detalle" asp-route-id="21300">
+            <span class="bar"></span>
+            <div class="tid"><b>#21300</b><small>Hace 12 min</small></div>
+            <div class="tmain"><b>Falla del refrigerador de vacunas en la clínica</b><small>Equipos médicos · Sin asignar</small></div>
+            <span class="pill p-alta">Alta</span>
+            <span class="st s-nuevo"><i class="dot"></i>Nuevo</span>
+            <span class="btn sm">Ver</span>
+        </a>
+        <a class="trow p-baja" asp-controller="Tickets" asp-action="Detalle" asp-route-id="21345">
+            <span class="bar"></span>
+            <div class="tid"><b>#21345</b><small>Hace 30 min</small></div>
+            <div class="tmain"><b>Citas de peluquería canina duplicadas en la agenda</b><small>Agenda de citas · Sin asignar</small></div>
+            <span class="pill p-baja">Baja</span>
+            <span class="st s-nuevo"><i class="dot"></i>Nuevo</span>
+            <span class="btn sm">Ver</span>
+        </a>
+        <a class="trow p-alta" asp-controller="Tickets" asp-action="Detalle" asp-route-id="21251">
+            <span class="bar"></span>
+            <div class="tid"><b>#21251</b><small>Hace 25 h</small></div>
+            <div class="tmain"><b>No puedo iniciar sesión desde el celular</b><small>Acceso · Juan Guillermo</small></div>
+            <span class="pill p-alta">Alta</span>
+            <span class="st s-resuelto"><i class="dot"></i>Resuelto</span>
+            <span class="btn sm">Ver</span>
+        </a>
+
+    @* <div class="empty">Aún no has creado tiquetes.</div> *@
+</div>

@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Historial";
+    ViewData["Heading"] = "Historial";
+    ViewData["Buscador"] = true;
+}
+@* Tiquetes en estado «Cerrado» *@
+<div class="list">
+        <a class="trow p-media" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21180">
+            <span class="bar"></span>
+            <div class="tid"><b>#21180</b><small>Hace 3 d</small></div>
+            <div class="tmain"><b>Resultados de laboratorio sin adjuntar</b><small>Laboratorio · Laura Vega</small></div>
+            <span class="pill p-media">Media</span>
+            <span class="st s-cerrado"><i class="dot"></i>Cerrado</span>
+            <span class="btn sm">Ver</span>
+        </a>
+    @* <div class="empty">Aún no hay tiquetes cerrados.</div> *@
+</div>

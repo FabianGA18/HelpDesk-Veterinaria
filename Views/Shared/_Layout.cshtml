@@ -1,0 +1,75 @@
+﻿@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    // El backend puede fijar ViewData["Rol"] y ViewData["Nombre"] desde el controlador.
+    // Si no lo hace, se infiere por sección (solo para poder ver el cascarón).
+    var rol = ViewData["Rol"] as string
+        ?? (controller == "Admin" ? "Administrador" : controller == "Soporte" ? "Soporte" : "Solicitante");
+    var nombre = ViewData["Nombre"] as string ?? User.Identity?.Name ?? "Usuario";
+    var esSolicitante = rol == "Solicitante";
+    string Activo(string c, params string[] acciones) =>
+        controller == c && (acciones.Length == 0 || acciones.Contains(action)) ? "on" : "";
+}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] · Soporte Veterinario</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="app">
+        <nav class="side" aria-label="Principal">
+            <div class="title">@(esSolicitante ? "Portal" : "DashBoard")</div>
+            @if (esSolicitante)
+            {
+                <a class="nav @Activo("Tickets")" asp-controller="Tickets" asp-action="Mis">Mis tiquetes</a>
+            }
+            else
+            {
+                <a class="nav @Activo("Soporte", "Index", "Detalle")" asp-controller="Soporte" asp-action="Index">Tickets</a>
+                <a class="nav @Activo("Soporte", "Historial")" asp-controller="Soporte" asp-action="Historial">Historial</a>
+                @if (rol == "Administrador")
+                {
+                    <a class="nav @Activo("Admin")" asp-controller="Admin" asp-action="Categorias">Administración</a>
+                }
+            }
+            <div class="spacer"></div>
+            <form asp-controller="Login" asp-action="CerrarSesión" method="post">
+                <button class="logout" type="submit">Cerrar Sesión</button>
+            </form>
+        </nav>
+
+        <main class="main">
+            <div class="top">
+                <h1>@ViewData["Heading"]</h1>
+                <div class="who">
+                    @if (ViewData["Buscador"] is true)
+                    {
+                        <form method="get"><input class="search" name="q" value="@Context.Request.Query["q"]" placeholder="Buscar por asunto o ID" aria-label="Buscar"></form>
+                    }
+                    <div class="meta"><b>@nombre</b><small>@rol</small></div>
+                    <div class="avatar">@nombre.Substring(0, Math.Min(2, nombre.Length)).ToUpper()</div>
+                </div>
+            </div>
+
+            @if (TempData["Ok"] is string ok)
+            {
+                <div class="alert" role="status">@ok</div>
+            }
+            @if (TempData["Error"] is string error)
+            {
+                <div class="alert error" role="alert">@error</div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

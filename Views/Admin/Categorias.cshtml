@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Categorías";
+    ViewData["Heading"] = "Administración";
+}
+<div class="tabs">
+    <a class="tab on" asp-action="Categorias">Categorías</a>
+    <a class="tab" asp-action="Usuarios">Usuarios y roles</a>
+    <a class="tab" asp-action="Prioridad">Tiquetes por prioridad</a>
+</div>
+
+<div class="card">
+    <div class="card-h"><h2>Categorías</h2><a class="btn" asp-action="CategoriaForm">Nueva categoría</a></div>
+    <div class="thead cols-cat"><span>Categoría</span><span>Tiquetes activos</span><span>Estado</span><span></span></div>
+    <div class="drow cols-cat"><b>Equipos médicos</b><span>2</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="1">Editar</a></div>
+    <div class="drow cols-cat"><b>Inventario</b><span>1</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="2">Editar</a></div>
+    <div class="drow cols-cat"><b>Agenda de citas</b><span>1</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="3">Editar</a></div>
+    <div class="drow cols-cat"><b>Laboratorio</b><span>0</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="4">Editar</a></div>
+</div>
+

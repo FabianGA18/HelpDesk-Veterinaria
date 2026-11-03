@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Detalle del tiquete";
+    ViewData["Heading"] = "Detalle del tiquete";
+    var id = 21302;
+}
+<a class="back" asp-action="Mis">← Volver a mis tiquetes</a>
+<div class="card page-narrow detail">
+    <small>#21302 · 3 nov 2026, 8:20 a. m.</small>
+    <h2 style="font-size:22px;margin-top:2px">Equipo de rayos X de la sala 2 no enciende</h2>
+    <div class="badges">
+        <span class="pill p-alta">Alta</span>
+        <span class="st s-progreso"><i class="dot"></i>En progreso</span>
+        <span class="pill role">Equipos médicos</span>
+    </div>
+    <small>Solicitante: Marta Solís · Responsable: Laura Vega</small>
+    <div class="sec"><h3>Descripción</h3><div class="box">El equipo no responde al botón de encendido desde ayer por la tarde.</div></div>
+    <div class="sec"><h3>Evidencia</h3><div class="files"><span class="file">📎 foto_equipo.jpg</span></div></div>
+    @* <div class="sec"><h3>Solución aplicada</h3><div class="box sol">...</div></div> *@
+
+    @* Solo si el estado es «Resuelto» (RF-07) *@
+    <div class="sec">
+        <form method="post" asp-action="Cerrar" asp-route-id="@id">
+            <button class="btn ok" type="submit">El problema fue resuelto: cerrar tiquete</button>
+        </form>
+    </div>
+
+    @* Solo si el tiquete no está cerrado (RF-06) *@
+    <form class="sec" method="post" asp-action="Comentar" asp-route-id="@id">
+        <h3>Agregar comentario</h3>
+        <div class="field"><textarea name="Comentario" placeholder="Escribe un comentario o seguimiento..." style="min-height:80px"></textarea></div>
+        <button class="btn sm" type="submit">Comentar</button>
+    </form>
+
+    <div class="sec"><h3>Historial</h3>
+        <div class="timeline">
+            <div class="ev comment"><small>Laura Vega · 3 nov 2026, 8:35 a. m.</small><div class="t">Revisando fuente de poder, aviso cuando tenga novedades.</div></div>
+            <div class="ev"><small>Laura Vega · 3 nov 2026, 8:30 a. m.</small><div class="t">Estado cambiado de Asignado a En progreso.</div></div>
+            <div class="ev"><small>Laura Vega · 3 nov 2026, 8:25 a. m.</small><div class="t">Asignado a Laura Vega. Estado: Asignado.</div></div>
+            <div class="ev"><small>Marta Solís · 3 nov 2026, 8:20 a. m.</small><div class="t">Tiquete creado con estado «Nuevo».</div></div>
+        </div>
+    </div>
+</div>

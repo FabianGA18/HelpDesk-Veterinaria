@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Detalle del tiquete";
+    ViewData["Heading"] = "Detalle del tiquete";
+    var id = 21302;
+}
+<a class="back" asp-action="Index">← Volver a la bandeja</a>
+<div class="card page-narrow detail">
+    <small>#21302 · 3 nov 2026, 8:20 a. m.</small>
+    <h2 style="font-size:22px;margin-top:2px">Equipo de rayos X de la sala 2 no enciende</h2>
+    <div class="badges">
+        <span class="pill p-alta">Alta</span>
+        <span class="st s-progreso"><i class="dot"></i>En progreso</span>
+        <span class="pill role">Equipos médicos</span>
+    </div>
+    <small>Solicitante: Marta Solís · Responsable: Laura Vega</small>
+    <div class="sec"><h3>Descripción</h3><div class="box">El equipo no responde al botón de encendido desde ayer por la tarde.</div></div>
+    <div class="sec"><h3>Evidencia</h3><div class="files"><span class="file">📎 foto_equipo.jpg</span></div></div>
+    @* <div class="sec"><h3>Solución aplicada</h3><div class="box sol">...</div></div> *@
+
+    <form class="sec" method="post" asp-action="Actualizar" asp-route-id="@id">
+        <h3>Gestión</h3>
+        <div class="grid2">
+            <div class="field"><label for="ResponsableId">Responsable</label>
+                <select id="ResponsableId" name="ResponsableId"><option value="">Sin asignar</option><option value="3">Juan Guillermo</option><option value="4" selected>Laura Vega</option><option value="5">Carlos Rojas</option></select></div>
+            <div class="field"><label for="Prioridad">Prioridad</label>
+                <select id="Prioridad" name="Prioridad"><option selected>Alta</option><option>Media</option><option>Baja</option></select></div>
+            <div class="field"><label for="CategoriaId">Categoría</label>
+                <select id="CategoriaId" name="CategoriaId"><option>Acceso</option><option>Datos de mascotas</option><option>Agenda de citas</option><option>Equipos médicos</option><option>Inventario</option><option>Laboratorio</option></select></div>
+            <div class="field"><label>Estado</label><div class="st s-progreso" style="width:100%"><i class="dot"></i>En progreso</div></div>
+        </div>
+        <button class="btn sm" type="submit">Guardar cambios</button>
+        <p class="hint">Al asignar un tiquete «Nuevo» pasa a «Asignado».</p>
+    </form>
+
+    @* Transiciones válidas según el estado actual (RF-12) *@
+    <div class="sec"><div class="actions">
+        <form method="post" asp-action="CambiarEstado" asp-route-id="@id"><input type="hidden" name="Estado" value="En espera"><button class="btn ghost sm" type="submit">Pasar a En espera</button></form>
+    </div></div>
+
+    @* Solo en «En progreso» (RF-13) *@
+    <form class="sec" method="post" asp-action="RegistrarSolucion" asp-route-id="@id">
+        <h3>Registrar solución aplicada</h3>
+        <div class="field"><textarea name="Solucion" placeholder="Describe los pasos realizados y la solución..." style="min-height:80px"></textarea></div>
+        <button class="btn ok sm" type="submit">Marcar como Resuelto</button>
+    </form>
+
+    <form class="sec" method="post" asp-action="Comentar" asp-route-id="@id">
+        <h3>Agregar comentario</h3>
+        <div class="field"><textarea name="Comentario" placeholder="Escribe un comentario o seguimiento..." style="min-height:80px"></textarea></div>
+        <button class="btn sm" type="submit">Comentar</button>
+    </form>
+
+    <div class="sec"><h3>Historial</h3>
+        <div class="timeline">
+            <div class="ev comment"><small>Laura Vega · 3 nov 2026, 8:35 a. m.</small><div class="t">Revisando fuente de poder, aviso cuando tenga novedades.</div></div>
+            <div class="ev"><small>Laura Vega · 3 nov 2026, 8:30 a. m.</small><div class="t">Estado cambiado de Asignado a En progreso.</div></div>
+            <div class="ev"><small>Laura Vega · 3 nov 2026, 8:25 a. m.</small><div class="t">Asignado a Laura Vega. Estado: Asignado.</div></div>
+            <div class="ev"><small>Marta Solís · 3 nov 2026, 8:20 a. m.</small><div class="t">Tiquete creado con estado «Nuevo».</div></div>
+        </div>
+    </div>
+</div>
+
