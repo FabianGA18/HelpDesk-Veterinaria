@@ -1,0 +1,15 @@
+﻿@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "Acceso denegado";
+}
+<div class="login-wrap">
+    <div class="login">
+        <div class="brand"><div class="logo" aria-hidden="true">🐾</div></div>
+        <h2>Acceso denegado</h2>
+        <p class="sub">Tu rol no tiene permiso para ver esta sección.</p>
+        <a class="btn block" asp-controller="Login" asp-action="InicioSesión">Volver al inicio</a>
+        <form asp-controller="Login" asp-action="CerrarSesión" method="post" style="margin-top:10px">
+            <button class="btn ghost block" type="submit">Cerrar sesión e ingresar con otra cuenta</button>
+        </form>
+    </div>
+</div>

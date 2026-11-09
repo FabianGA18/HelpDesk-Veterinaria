@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Sistema_Gestión_Citas.Models.ViewModels.LoginViewModel
+@{
     Layout = "_LoginLayout";
     ViewData["Title"] = "Iniciar sesión";
 }
@@ -10,23 +11,14 @@
 
         <div class="field">
             <label for="Usuario">Usuario (correo)</label>
-            <input id="Usuario" name="Usuario" type="email" autocomplete="username" placeholder="correo@@empresa.com">
+            <input id="Usuario" name="Usuario" type="email" autocomplete="username" placeholder="correo@@empresa.com" value="@Model?.Usuario">
         </div>
         <div class="field">
             <label for="Password">Contraseña</label>
             <input id="Password" name="Password" type="password" autocomplete="current-password" placeholder="••••">
         </div>
+        <input type="hidden" name="ReturnUrl" value="@Model?.ReturnUrl">
         <div class="err" role="alert">@ViewData["Error"]</div>
         <button class="btn block" type="submit">Ingresar</button>
-
-        @* Borrar, heecho solo para desplazarse  entre pantallas *@
-        <div class="demo">
-            <small>Acceso de prueba</small>
-            <div class="chips">
-                <a class="chip" asp-controller="Tickets" asp-action="Mis">Solicitante</a>
-                <a class="chip" asp-controller="Soporte" asp-action="Index">Soporte</a>
-                <a class="chip" asp-controller="Admin" asp-action="Categorias">Administrador</a>
-            </div>
-        </div>
     </form>
 </div>

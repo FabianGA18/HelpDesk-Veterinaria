@@ -2,10 +2,10 @@
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
     var action = ViewContext.RouteData.Values["action"]?.ToString();
 
-    // El backend puede fijar ViewData["Rol"] y ViewData["Nombre"] desde el controlador.
-    // Si no lo hace, se infiere por sección (solo para poder ver el cascarón).
+    // Rol y nombre salen de la cookie de autenticación (claims definidos en LoginController).
     var rol = ViewData["Rol"] as string
-        ?? (controller == "Admin" ? "Administrador" : controller == "Soporte" ? "Soporte" : "Solicitante");
+        ?? User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+        ?? "Solicitante";
     var nombre = ViewData["Nombre"] as string ?? User.Identity?.Name ?? "Usuario";
     var esSolicitante = rol == "Solicitante";
     string Activo(string c, params string[] acciones) =>

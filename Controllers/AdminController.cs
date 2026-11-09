@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Sistema_Gestión_Citas.Models.Entidades;
 
 namespace Sistema_Gestión_Citas.Controllers
 {
+    // RNF-02: solo administradores.
+    [Authorize(Roles = Roles.Administrador)]
     public class AdminController : Controller
     {
         public IActionResult CategoriaForm()

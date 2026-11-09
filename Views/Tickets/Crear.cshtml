@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Sistema_Gestión_Citas.Models.ViewModels.CrearTiqueteViewModel
+@{
     ViewData["Title"] = "Crear tiquete";
     ViewData["Heading"] = "Portal del solicitante";
 }
@@ -16,19 +17,21 @@
 
     <div class="field">
         <label for="Asunto">Asunto</label>
-        <input id="Asunto" name="Asunto" maxlength="120" placeholder="Resume el problema en una línea">
+        <input id="Asunto" name="Asunto" maxlength="120" placeholder="Resume el problema en una línea" value="@Model.Asunto">
     </div>
     <div class="field">
         <label for="Categoria">Categoría</label>
         <select id="Categoria" name="CategoriaId">
             <option value="">Selecciona una categoría</option>
-            @* TODO: @foreach (var c in Model.Categorias) { <option value="@c.Id">@c.Nombre</option> } *@
-            <option>Acceso</option><option>Datos de mascotas</option><option>Agenda de citas</option><option>Equipos médicos</option><option>Inventario</option><option>Laboratorio</option>
+            @foreach (var c in Model.Categorias)
+            {
+                <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">@c.Nombre</option>
+            }
         </select>
     </div>
     <div class="field">
         <label for="Descripcion">Descripción</label>
-        <textarea id="Descripcion" name="Descripcion" placeholder="¿Qué ocurre, desde cuándo y a quién afecta?"></textarea>
+        <textarea id="Descripcion" name="Descripcion" placeholder="¿Qué ocurre, desde cuándo y a quién afecta?">@Model.Descripcion</textarea>
     </div>
     <div class="field">
         <label>Evidencia <small>(PDF, JPG o PNG, máx. 10 MB)</small></label>
@@ -37,7 +40,7 @@
         <div class="files" id="lista-archivos"></div>
     </div>
 
-    <div class="err" role="alert" id="error-form"></div>
+    <div class="err" role="alert" id="error-form">@string.Join(" ", ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))</div>
     <div class="form-actions">
         <a class="btn ghost" asp-action="Mis">Cancelar</a>
         <button class="btn" type="submit">Enviar tiquete</button>
