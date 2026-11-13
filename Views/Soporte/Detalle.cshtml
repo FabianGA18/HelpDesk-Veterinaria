@@ -1,62 +1,100 @@
-﻿@{
+﻿@using Sistema_Gestión_Citas.Infraestructura
+@using Sistema_Gestión_Citas.Models.Entidades
+@model Sistema_Gestión_Citas.Models.ViewModels.GestionTiqueteViewModel
+@{
     ViewData["Title"] = "Detalle del tiquete";
     ViewData["Heading"] = "Detalle del tiquete";
-    var id = 21302;
+    var t = Model.Tiquete;
 }
-<a class="back" asp-action="Index">← Volver a la bandeja</a>
+<a class="back" asp-action="@(Model.EsCerrado ? "Historial" : "Index")">← Volver a la bandeja</a>
 <div class="card page-narrow detail">
-    <small>#21302 · 3 nov 2026, 8:20 a. m.</small>
-    <h2 style="font-size:22px;margin-top:2px">Equipo de rayos X de la sala 2 no enciende</h2>
+    <small>#@t.Id · @Formato.Fecha(t.FechaCreacion)</small>
+    <h2 style="font-size:22px;margin-top:2px">@t.Asunto</h2>
     <div class="badges">
-        <span class="pill p-alta">Alta</span>
-        <span class="st s-progreso"><i class="dot"></i>En progreso</span>
-        <span class="pill role">Equipos médicos</span>
+        <span class="pill @t.Prioridad.ClaseCss()">@t.Prioridad.Texto()</span>
+        <span class="st @t.Estado.ClaseCss()"><i class="dot"></i>@t.Estado.Texto()</span>
+        <span class="pill role">@t.Categoria</span>
     </div>
-    <small>Solicitante: Marta Solís · Responsable: Laura Vega</small>
-    <div class="sec"><h3>Descripción</h3><div class="box">El equipo no responde al botón de encendido desde ayer por la tarde.</div></div>
-    <div class="sec"><h3>Evidencia</h3><div class="files"><span class="file">📎 foto_equipo.jpg</span></div></div>
-    @* <div class="sec"><h3>Solución aplicada</h3><div class="box sol">...</div></div> *@
+    <small>Solicitante: @t.Solicitante · Responsable: @(t.Responsable ?? "Sin asignar")</small>
+    <div class="sec"><h3>Descripción</h3><div class="box">@t.Descripcion</div></div>
+    @* TODO Iteración 3 (HU-03): lista de evidencias adjuntas *@
+    @if (!string.IsNullOrWhiteSpace(t.Solucion))
+    {
+        <div class="sec"><h3>Solución aplicada</h3><div class="box sol">@t.Solucion</div></div>
+    }
 
-    <form class="sec" method="post" asp-action="Actualizar" asp-route-id="@id">
-        <h3>Gestión</h3>
-        <div class="grid2">
-            <div class="field"><label for="ResponsableId">Responsable</label>
-                <select id="ResponsableId" name="ResponsableId"><option value="">Sin asignar</option><option value="3">Juan Guillermo</option><option value="4" selected>Laura Vega</option><option value="5">Carlos Rojas</option></select></div>
-            <div class="field"><label for="Prioridad">Prioridad</label>
-                <select id="Prioridad" name="Prioridad"><option selected>Alta</option><option>Media</option><option>Baja</option></select></div>
-            <div class="field"><label for="CategoriaId">Categoría</label>
-                <select id="CategoriaId" name="CategoriaId"><option>Acceso</option><option>Datos de mascotas</option><option>Agenda de citas</option><option>Equipos médicos</option><option>Inventario</option><option>Laboratorio</option></select></div>
-            <div class="field"><label>Estado</label><div class="st s-progreso" style="width:100%"><i class="dot"></i>En progreso</div></div>
-        </div>
-        <button class="btn sm" type="submit">Guardar cambios</button>
-        <p class="hint">Al asignar un tiquete «Nuevo» pasa a «Asignado».</p>
-    </form>
+    @if (!Model.EsCerrado)
+    {
+        <form class="sec" method="post" asp-action="Actualizar" asp-route-id="@t.Id">
+            <h3>Gestión</h3>
+            <div class="grid2">
+                <div class="field"><label for="ResponsableId">Responsable</label>
+                    <select id="ResponsableId" name="ResponsableId">
+                        <option value="">Sin asignar</option>
+                        @foreach (var a in Model.Agentes)
+                        {
+                            <option value="@a.Id" selected="@(t.ResponsableId == a.Id)">@a.Nombre</option>
+                        }
+                    </select></div>
+                <div class="field"><label for="Prioridad">Prioridad</label>
+                    <select id="Prioridad" name="Prioridad">
+                        @if (t.Prioridad is null)
+                        {
+                            <option value="" selected>Sin prioridad</option>
+                        }
+                        @foreach (var p in new[] { PrioridadTiquete.Alta, PrioridadTiquete.Media, PrioridadTiquete.Baja })
+                        {
+                            <option value="@p" selected="@(t.Prioridad == p)">@p.Texto()</option>
+                        }
+                    </select></div>
+                <div class="field"><label for="CategoriaId">Categoría</label>
+                    <select id="CategoriaId" name="CategoriaId">
+                        @foreach (var c in Model.Categorias.Where(c => c.Activa || c.Id == t.CategoriaId))
+                        {
+                            <option value="@c.Id" selected="@(t.CategoriaId == c.Id)">@c.Nombre@(c.Activa ? "" : " (inactiva)")</option>
+                        }
+                    </select></div>
+                <div class="field"><label>Estado</label><div class="st @t.Estado.ClaseCss()" style="width:100%"><i class="dot"></i>@t.Estado.Texto()</div></div>
+            </div>
+            <button class="btn sm" type="submit">Guardar cambios</button>
+            <p class="hint">Al asignar un tiquete «Nuevo» pasa a «Asignado».</p>
+        </form>
 
-    @* Transiciones válidas según el estado actual (RF-12) *@
-    <div class="sec"><div class="actions">
-        <form method="post" asp-action="CambiarEstado" asp-route-id="@id"><input type="hidden" name="Estado" value="En espera"><button class="btn ghost sm" type="submit">Pasar a En espera</button></form>
-    </div></div>
+        @* Transiciones válidas según el estado actual (RF-12) *@
+        @if (Model.Transiciones.Count > 0)
+        {
+            <div class="sec"><div class="actions">
+                @foreach (var e in Model.Transiciones)
+                {
+                    var etiqueta = t.Estado == EstadoTiquete.Resuelto ? "Reabrir (En progreso)" : $"Pasar a {e.Texto()}";
+                    <form method="post" asp-action="CambiarEstado" asp-route-id="@t.Id"><input type="hidden" name="Estado" value="@e"><button class="btn ghost sm" type="submit">@etiqueta</button></form>
+                }
+            </div></div>
+        }
 
-    @* Solo en «En progreso» (RF-13) *@
-    <form class="sec" method="post" asp-action="RegistrarSolucion" asp-route-id="@id">
-        <h3>Registrar solución aplicada</h3>
-        <div class="field"><textarea name="Solucion" placeholder="Describe los pasos realizados y la solución..." style="min-height:80px"></textarea></div>
-        <button class="btn ok sm" type="submit">Marcar como Resuelto</button>
-    </form>
+        @* Solo en «En progreso» (RF-13) *@
+        @if (Model.PuedeRegistrarSolucion)
+        {
+            <form class="sec" method="post" asp-action="RegistrarSolucion" asp-route-id="@t.Id">
+                <h3>Registrar solución aplicada</h3>
+                <div class="field"><textarea name="Solucion" maxlength="4000" placeholder="Describe los pasos realizados y la solución..." style="min-height:80px"></textarea></div>
+                <button class="btn ok sm" type="submit">Marcar como Resuelto</button>
+            </form>
+        }
 
-    <form class="sec" method="post" asp-action="Comentar" asp-route-id="@id">
-        <h3>Agregar comentario</h3>
-        <div class="field"><textarea name="Comentario" placeholder="Escribe un comentario o seguimiento..." style="min-height:80px"></textarea></div>
-        <button class="btn sm" type="submit">Comentar</button>
-    </form>
+        <form class="sec" method="post" asp-action="Comentar" asp-route-id="@t.Id">
+            <h3>Agregar comentario</h3>
+            <div class="field"><textarea name="Comentario" maxlength="4000" placeholder="Escribe un comentario o seguimiento..." style="min-height:80px"></textarea></div>
+            <button class="btn sm" type="submit">Comentar</button>
+        </form>
+    }
 
     <div class="sec"><h3>Historial</h3>
         <div class="timeline">
-            <div class="ev comment"><small>Laura Vega · 3 nov 2026, 8:35 a. m.</small><div class="t">Revisando fuente de poder, aviso cuando tenga novedades.</div></div>
-            <div class="ev"><small>Laura Vega · 3 nov 2026, 8:30 a. m.</small><div class="t">Estado cambiado de Asignado a En progreso.</div></div>
-            <div class="ev"><small>Laura Vega · 3 nov 2026, 8:25 a. m.</small><div class="t">Asignado a Laura Vega. Estado: Asignado.</div></div>
-            <div class="ev"><small>Marta Solís · 3 nov 2026, 8:20 a. m.</small><div class="t">Tiquete creado con estado «Nuevo».</div></div>
+            @foreach (var ev in t.Historial)
+            {
+                <div class="ev @(ev.Tipo == TipoEvento.Comentario ? "comment" : "")"><small>@ev.Usuario · @Formato.Fecha(ev.Fecha)</small><div class="t">@ev.Descripcion</div></div>
+            }
         </div>
     </div>
 </div>
-

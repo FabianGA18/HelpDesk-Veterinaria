@@ -1,0 +1,10 @@
+@using Sistema_Gestión_Citas.Infraestructura
+@model Sistema_Gestión_Citas.Models.ViewModels.TiqueteFilaViewModel
+<a class="trow @Model.Prioridad.ClaseCss()" asp-controller="Soporte" asp-action="Detalle" asp-route-id="@Model.Id">
+    <span class="bar"></span>
+    <div class="tid"><b>#@Model.Id</b><small>@Formato.Relativo(Model.FechaCreacion)</small></div>
+    <div class="tmain"><b>@Model.Asunto</b><small>@Model.Categoria · @(Model.Responsable ?? "Sin asignar")</small></div>
+    <span class="pill @Model.Prioridad.ClaseCss()">@Model.Prioridad.Texto()</span>
+    <span class="st @Model.Estado.ClaseCss()"><i class="dot"></i>@Model.Estado.Texto()</span>
+    <span class="btn sm">Ver</span>
+</a>

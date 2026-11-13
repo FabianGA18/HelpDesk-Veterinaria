@@ -41,8 +41,10 @@ namespace Sistema_Gestión_Citas.Models.ViewModels
         public string Asunto { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
         public string Categoria { get; set; } = string.Empty;
+        public int CategoriaId { get; set; }
         public string Solicitante { get; set; } = string.Empty;
         public string? Responsable { get; set; }
+        public int? ResponsableId { get; set; }
         public EstadoTiquete Estado { get; set; }
         public PrioridadTiquete? Prioridad { get; set; }
         public DateTime FechaCreacion { get; set; }
@@ -63,8 +65,10 @@ namespace Sistema_Gestión_Citas.Models.ViewModels
             Asunto = t.Asunto,
             Descripcion = t.Descripcion,
             Categoria = t.Categoria.Nombre,
+            CategoriaId = t.CategoriaId,
             Solicitante = t.Solicitante.Nombre,
             Responsable = t.Responsable?.Nombre,
+            ResponsableId = t.ResponsableId,
             Estado = t.Estado,
             Prioridad = t.Prioridad,
             FechaCreacion = t.FechaCreacion,

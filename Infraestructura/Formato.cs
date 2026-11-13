@@ -17,6 +17,22 @@ namespace Sistema_Gestión_Citas.Infraestructura
             return miembro?.GetCustomAttribute<DisplayAttribute>()?.Name ?? valor.ToString();
         }
 
+        /// <summary>
+        /// Convierte el texto de un filtro («En progreso», «EnProgreso», «Alta», ...) al enum.
+        /// Devuelve null si está vacío, es «Todos» o no coincide.
+        /// </summary>
+        public static T? ParsearEnum<T>(string? texto) where T : struct, Enum
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return null;
+            foreach (var valor in Enum.GetValues<T>())
+            {
+                if (string.Equals(valor.ToString(), texto, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(valor.Texto(), texto, StringComparison.OrdinalIgnoreCase))
+                    return valor;
+            }
+            return null;
+        }
+
         public static string Texto(this PrioridadTiquete? prioridad) => prioridad?.Texto() ?? "Sin prioridad";
 
         /// <summary>Clase CSS del estado (site.css: s-nuevo, s-asignado, s-progreso, ...).</summary>

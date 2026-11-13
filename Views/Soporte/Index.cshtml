@@ -1,59 +1,47 @@
-﻿@{
+﻿@using Sistema_Gestión_Citas.Infraestructura
+@using Sistema_Gestión_Citas.Models.Entidades
+@model Sistema_Gestión_Citas.Models.ViewModels.BandejaViewModel
+@{
     ViewData["Title"] = "Tickets";
     ViewData["Heading"] = "Tickets";
     ViewData["Buscador"] = true;
-    var estado = Context.Request.Query["estado"].ToString();
-    if (string.IsNullOrEmpty(estado)) estado = "Todos";
+    var estados = new EstadoTiquete?[] { null, EstadoTiquete.Nuevo, EstadoTiquete.Asignado, EstadoTiquete.EnProgreso, EstadoTiquete.EnEspera, EstadoTiquete.Resuelto };
 }
 <form class="toolbar" method="get">
     <div class="tabs">
-        <a class="tab @(estado == "Todos" ? "on" : "")" asp-action="Index" asp-route-estado="Todos">Todos</a>
-        <a class="tab @(estado == "Nuevo" ? "on" : "")" asp-action="Index" asp-route-estado="Nuevo">Nuevo</a>
-        <a class="tab @(estado == "Asignado" ? "on" : "")" asp-action="Index" asp-route-estado="Asignado">Asignado</a>
-        <a class="tab @(estado == "En progreso" ? "on" : "")" asp-action="Index" asp-route-estado="En progreso">En progreso</a>
-        <a class="tab @(estado == "En espera" ? "on" : "")" asp-action="Index" asp-route-estado="En espera">En espera</a>
-        <a class="tab @(estado == "Resuelto" ? "on" : "")" asp-action="Index" asp-route-estado="Resuelto">Resuelto</a>
+        @foreach (var e in estados)
+        {
+            @* Cada pestaña conserva los demás filtros aplicados *@
+            <a class="tab @(Model.Estado == e ? "on" : "")" asp-action="Index"
+               asp-route-estado="@(e?.Texto() ?? "Todos")" asp-route-prioridad="@Model.Prioridad"
+               asp-route-categoria="@Model.CategoriaId" asp-route-q="@Model.Busqueda">@(e?.Texto() ?? "Todos")</a>
+        }
     </div>
+    <input type="hidden" name="estado" value="@(Model.Estado?.Texto() ?? "Todos")">
+    <input type="hidden" name="q" value="@Model.Busqueda">
     <select name="prioridad" aria-label="Prioridad" onchange="this.form.submit()">
-        <option value="">Toda prioridad</option><option>Alta</option><option>Media</option><option>Baja</option>
+        <option value="">Toda prioridad</option>
+        @foreach (var p in new[] { PrioridadTiquete.Alta, PrioridadTiquete.Media, PrioridadTiquete.Baja })
+        {
+            <option value="@p" selected="@(Model.Prioridad == p)">@p.Texto()</option>
+        }
     </select>
     <select name="categoria" aria-label="Categoría" onchange="this.form.submit()">
-        <option value="">Toda categoría</option><option>Acceso</option><option>Datos de mascotas</option><option>Agenda de citas</option><option>Equipos médicos</option><option>Inventario</option><option>Laboratorio</option>
+        <option value="">Toda categoría</option>
+        @foreach (var c in Model.Categorias)
+        {
+            <option value="@c.Id" selected="@(Model.CategoriaId == c.Id)">@c.Nombre</option>
+        }
     </select>
 </form>
 
 <div class="list">
-        <a class="trow p-alta" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21300">
-            <span class="bar"></span>
-            <div class="tid"><b>#21300</b><small>Hace 12 min</small></div>
-            <div class="tmain"><b>Falla del refrigerador de vacunas en la clínica</b><small>Equipos médicos · Sin asignar</small></div>
-            <span class="pill p-alta">Alta</span>
-            <span class="st s-nuevo"><i class="dot"></i>Nuevo</span>
-            <span class="btn sm">Ver</span>
-        </a>
-        <a class="trow p-alta" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21302">
-            <span class="bar"></span>
-            <div class="tid"><b>#21302</b><small>Hace 20 min</small></div>
-            <div class="tmain"><b>Equipo de rayos X de la sala 2 no enciende</b><small>Equipos médicos · Laura Vega</small></div>
-            <span class="pill p-alta">Alta</span>
-            <span class="st s-progreso"><i class="dot"></i>En progreso</span>
-            <span class="btn sm">Ver</span>
-        </a>
-        <a class="trow p-media" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21390">
-            <span class="bar"></span>
-            <div class="tid"><b>#21390</b><small>Hace 45 min</small></div>
-            <div class="tmain"><b>Inventario de antiparasitarios desactualizado</b><small>Inventario · Carlos Rojas</small></div>
-            <span class="pill p-media">Media</span>
-            <span class="st s-nuevo"><i class="dot"></i>Nuevo</span>
-            <span class="btn sm">Ver</span>
-        </a>
-        <a class="trow p-baja" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21345">
-            <span class="bar"></span>
-            <div class="tid"><b>#21345</b><small>Hace 30 min</small></div>
-            <div class="tmain"><b>Citas de peluquería canina duplicadas en la agenda</b><small>Agenda de citas · Sin asignar</small></div>
-            <span class="pill p-baja">Baja</span>
-            <span class="st s-nuevo"><i class="dot"></i>Nuevo</span>
-            <span class="btn sm">Ver</span>
-        </a>
-    @* <div class="empty">No hay tiquetes que coincidan con los filtros.</div> *@
+    @foreach (var t in Model.Tiquetes)
+    {
+        <partial name="_FilaTiquete" model="t" />
+    }
+    @if (Model.Tiquetes.Count == 0)
+    {
+        <div class="empty">@(Model.HayFiltros ? "No hay tiquetes que coincidan con los filtros." : "No hay tiquetes abiertos.")</div>
+    }
 </div>
