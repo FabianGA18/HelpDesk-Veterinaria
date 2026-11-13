@@ -16,6 +16,9 @@ namespace Sistema_Gestión_Citas.Models.ViewModels
         [StringLength(4000, ErrorMessage = "La descripción admite máximo 4000 caracteres.")]
         public string Descripcion { get; set; } = string.Empty;
 
+        /// <summary>Evidencias opcionales: PDF, JPG o PNG, máximo 10 MB cada una (HU-03, RNF-06).</summary>
+        public List<IFormFile> Evidencias { get; set; } = new();
+
         /// <summary>Opciones del combo de categorías (solo activas).</summary>
         public List<Categoria> Categorias { get; set; } = new();
     }

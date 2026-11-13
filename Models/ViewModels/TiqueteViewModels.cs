@@ -35,6 +35,17 @@ namespace Sistema_Gestión_Citas.Models.ViewModels
         public string Descripcion { get; set; } = string.Empty;
     }
 
+    public class EvidenciaViewModel
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public long TamanoBytes { get; set; }
+
+        public string Tamano => TamanoBytes >= 1024 * 1024
+            ? $"{TamanoBytes / (1024.0 * 1024):0.#} MB"
+            : $"{Math.Max(1, TamanoBytes / 1024)} KB";
+    }
+
     public class TiqueteDetalleViewModel
     {
         public int Id { get; set; }
@@ -49,6 +60,8 @@ namespace Sistema_Gestión_Citas.Models.ViewModels
         public PrioridadTiquete? Prioridad { get; set; }
         public DateTime FechaCreacion { get; set; }
         public string? Solucion { get; set; }
+
+        public List<EvidenciaViewModel> Evidencias { get; set; } = new();
 
         /// <summary>Más reciente primero.</summary>
         public List<EventoHistorialViewModel> Historial { get; set; } = new();
@@ -73,6 +86,10 @@ namespace Sistema_Gestión_Citas.Models.ViewModels
             Prioridad = t.Prioridad,
             FechaCreacion = t.FechaCreacion,
             Solucion = t.Solucion,
+            Evidencias = t.Evidencias
+                .OrderBy(e => e.Id)
+                .Select(e => new EvidenciaViewModel { Id = e.Id, Nombre = e.NombreOriginal, TamanoBytes = e.TamanoBytes })
+                .ToList(),
             Historial = t.Historial
                 .OrderByDescending(h => h.Fecha).ThenByDescending(h => h.Id)
                 .Select(h => new EventoHistorialViewModel

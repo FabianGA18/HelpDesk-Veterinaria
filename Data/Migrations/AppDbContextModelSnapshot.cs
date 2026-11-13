@@ -50,6 +50,53 @@ namespace Sistema_Gestión_Citas.Data.Migrations
                     b.ToTable("Categorias");
                 });
 
+            modelBuilder.Entity("Sistema_Gestión_Citas.Models.Entidades.Evidencia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaSubida")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NombreArchivo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NombreOriginal")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("SubidoPorId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TamanoBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TipoContenido")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("TiqueteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NombreArchivo")
+                        .IsUnique();
+
+                    b.HasIndex("SubidoPorId");
+
+                    b.HasIndex("TiqueteId");
+
+                    b.ToTable("Evidencias");
+                });
+
             modelBuilder.Entity("Sistema_Gestión_Citas.Models.Entidades.HistorialTiquete", b =>
                 {
                     b.Property<int>("Id")
@@ -217,6 +264,25 @@ namespace Sistema_Gestión_Citas.Data.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("Sistema_Gestión_Citas.Models.Entidades.Evidencia", b =>
+                {
+                    b.HasOne("Sistema_Gestión_Citas.Models.Entidades.Usuario", "SubidoPor")
+                        .WithMany()
+                        .HasForeignKey("SubidoPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Sistema_Gestión_Citas.Models.Entidades.Tiquete", "Tiquete")
+                        .WithMany("Evidencias")
+                        .HasForeignKey("TiqueteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SubidoPor");
+
+                    b.Navigation("Tiquete");
+                });
+
             modelBuilder.Entity("Sistema_Gestión_Citas.Models.Entidades.HistorialTiquete", b =>
                 {
                     b.HasOne("Sistema_Gestión_Citas.Models.Entidades.Tiquete", "Tiquete")
@@ -285,6 +351,8 @@ namespace Sistema_Gestión_Citas.Data.Migrations
 
             modelBuilder.Entity("Sistema_Gestión_Citas.Models.Entidades.Tiquete", b =>
                 {
+                    b.Navigation("Evidencias");
+
                     b.Navigation("Historial");
                 });
 

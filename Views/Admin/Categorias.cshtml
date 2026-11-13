@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<Sistema_Gestión_Citas.Models.ViewModels.CategoriaFilaViewModel>
+@{
     ViewData["Title"] = "Categorías";
     ViewData["Heading"] = "Administración";
 }
@@ -11,9 +12,12 @@
 <div class="card">
     <div class="card-h"><h2>Categorías</h2><a class="btn" asp-action="CategoriaForm">Nueva categoría</a></div>
     <div class="thead cols-cat"><span>Categoría</span><span>Tiquetes activos</span><span>Estado</span><span></span></div>
-    <div class="drow cols-cat"><b>Equipos médicos</b><span>2</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="1">Editar</a></div>
-    <div class="drow cols-cat"><b>Inventario</b><span>1</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="2">Editar</a></div>
-    <div class="drow cols-cat"><b>Agenda de citas</b><span>1</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="3">Editar</a></div>
-    <div class="drow cols-cat"><b>Laboratorio</b><span>0</span><span class="status-ok"><i></i>Activa</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="4">Editar</a></div>
+    @foreach (var c in Model)
+    {
+        <div class="drow cols-cat"><b>@c.Nombre</b><span>@c.TiquetesActivos</span><span class="@(c.Activa ? "status-ok" : "status-off")"><i></i>@(c.Activa ? "Activa" : "Inactiva")</span><a class="btn ghost sm" asp-action="CategoriaForm" asp-route-id="@c.Id">Editar</a></div>
+    }
+    @if (Model.Count == 0)
+    {
+        <div class="empty">Aún no hay categorías.</div>
+    }
 </div>
-

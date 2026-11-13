@@ -1,7 +1,9 @@
-﻿@{
+﻿@using Sistema_Gestión_Citas.Infraestructura
+@using Sistema_Gestión_Citas.Models.Entidades
+@model Sistema_Gestión_Citas.Models.ViewModels.PrioridadAdminViewModel
+@{
     ViewData["Title"] = "Tiquetes por prioridad";
     ViewData["Heading"] = "Administración";
-    var prioridad = Context.Request.Query["prioridad"].ToString();
 }
 <div class="tabs">
     <a class="tab" asp-action="Categorias">Categorías</a>
@@ -10,18 +12,23 @@
 </div>
 
 <div class="stats">
-    <a class="stat p-alta @(prioridad == "Alta" ? "on" : "")" asp-action="Prioridad" asp-route-prioridad="Alta" style="text-decoration:none;color:inherit"><span class="pill p-alta">Alta</span><div class="n">1</div><small>tiquetes abiertos</small></a>
-    <a class="stat p-media @(prioridad == "Media" ? "on" : "")" asp-action="Prioridad" asp-route-prioridad="Media" style="text-decoration:none;color:inherit"><span class="pill p-media">Media</span><div class="n">1</div><small>tiquetes abiertos</small></a>
-    <a class="stat p-baja @(prioridad == "Baja" ? "on" : "")" asp-action="Prioridad" asp-route-prioridad="Baja" style="text-decoration:none;color:inherit"><span class="pill p-baja">Baja</span><div class="n">1</div><small>tiquetes abiertos</small></a>
-    <a class="stat @(prioridad == "" ? "on" : "")" asp-action="Prioridad" style="--c:var(--primary);text-decoration:none;color:inherit"><span class="pill" style="--c:var(--primary)">Todos</span><div class="n">4</div><small>tiquetes abiertos</small></a>
+    @foreach (var p in new[] { PrioridadTiquete.Alta, PrioridadTiquete.Media, PrioridadTiquete.Baja })
+    {
+        PrioridadTiquete? valor = p;
+        <a class="stat @valor.ClaseCss() @(Model.Prioridad == p ? "on" : "")" asp-action="Prioridad" asp-route-prioridad="@p" style="text-decoration:none;color:inherit"><span class="pill @valor.ClaseCss()">@p.Texto()</span><div class="n">@Model.Conteos.GetValueOrDefault(p)</div><small>tiquetes abiertos</small></a>
+    }
+    <a class="stat @(Model.Prioridad is null ? "on" : "")" asp-action="Prioridad" style="--c:var(--primary);text-decoration:none;color:inherit"><span class="pill" style="--c:var(--primary)">Todos</span><div class="n">@Model.TotalAbiertos</div><small>tiquetes abiertos</small></a>
 </div>
 
 <div class="card">
     <div class="card-h"><h2>Tiquetes por prioridad</h2></div>
     <div class="thead cols-pri"><span>ID</span><span>Asunto</span><span>Prioridad</span><span>Responsable</span><span>Estado</span></div>
-    <a class="drow cols-pri" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21300" style="text-decoration:none;color:inherit"><b style="color:#b9c6ff">#21300</b><b>Falla del refrigerador de vacunas en la clínica</b><span><span class="pill p-alta">Alta</span></span><span>Sin asignar</span><span class="status-ok s-nuevo"><i style="background:var(--c)"></i>Nuevo</span></a>
-    <a class="drow cols-pri" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21302" style="text-decoration:none;color:inherit"><b style="color:#b9c6ff">#21302</b><b>Equipo de rayos X de la sala 2 no enciende</b><span><span class="pill p-alta">Alta</span></span><span>Laura Vega</span><span class="status-ok s-progreso"><i style="background:var(--c)"></i>En progreso</span></a>
-    <a class="drow cols-pri" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21390" style="text-decoration:none;color:inherit"><b style="color:#b9c6ff">#21390</b><b>Inventario de antiparasitarios desactualizado</b><span><span class="pill p-media">Media</span></span><span>Carlos Rojas</span><span class="status-ok s-nuevo"><i style="background:var(--c)"></i>Nuevo</span></a>
-    <a class="drow cols-pri" asp-controller="Soporte" asp-action="Detalle" asp-route-id="21345" style="text-decoration:none;color:inherit"><b style="color:#b9c6ff">#21345</b><b>Citas de peluquería canina duplicadas en la agenda</b><span><span class="pill p-baja">Baja</span></span><span>Sin asignar</span><span class="status-ok s-nuevo"><i style="background:var(--c)"></i>Nuevo</span></a>
+    @foreach (var t in Model.Tiquetes)
+    {
+        <a class="drow cols-pri" asp-controller="Soporte" asp-action="Detalle" asp-route-id="@t.Id" style="text-decoration:none;color:inherit"><b style="color:#b9c6ff">#@t.Id</b><b>@t.Asunto</b><span><span class="pill @t.Prioridad.ClaseCss()">@t.Prioridad.Texto()</span></span><span>@(t.Responsable ?? "Sin asignar")</span><span class="status-ok @t.Estado.ClaseCss()"><i style="background:var(--c)"></i>@t.Estado.Texto()</span></a>
+    }
+    @if (Model.Tiquetes.Count == 0)
+    {
+        <div class="empty">No hay tiquetes abiertos@(Model.Prioridad is null ? "" : " con esa prioridad").</div>
+    }
 </div>
-

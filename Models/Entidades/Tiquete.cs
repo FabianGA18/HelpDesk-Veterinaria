@@ -30,5 +30,6 @@ namespace Sistema_Gestión_Citas.Models.Entidades
         public Usuario? Responsable { get; set; }
 
         public ICollection<HistorialTiquete> Historial { get; set; } = new List<HistorialTiquete>();
+        public ICollection<Evidencia> Evidencias { get; set; } = new List<Evidencia>();
     }
 }

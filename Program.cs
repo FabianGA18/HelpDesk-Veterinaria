@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Gestión_Citas.Data;
+using Sistema_Gestión_Citas.Infraestructura;
 using Sistema_Gestión_Citas.Models.Entidades;
 using Sistema_Gestión_Citas.Services;
 
@@ -22,6 +23,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        // Usuario desactivado o con rol cambiado pierde la sesión de inmediato.
+        options.Events.OnValidatePrincipal = ValidadorSesion.ValidarAsync;
     });
 builder.Services.AddAuthorization();
 
@@ -29,6 +32,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ITiqueteService, TiqueteService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<IEvidenciaService, EvidenciaService>();
 
 builder.Services.AddControllersWithViews();
 

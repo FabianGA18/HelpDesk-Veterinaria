@@ -1,23 +1,35 @@
-﻿@{
+﻿@model Sistema_Gestión_Citas.Models.ViewModels.UsuarioFormViewModel
+@{
     ViewData["Title"] = "Usuario";
     ViewData["Heading"] = "Administración";
-    int? id = null; // TODO: Model.Id
+    var id = Model.Id;
 }
 <a class="back" asp-action="Usuarios">← Volver a usuarios</a>
 <form class="card page-narrow" method="post" asp-action="GuardarUsuario" asp-route-id="@id" novalidate>
     <h2 style="margin-bottom:18px">@(id is null ? "Nuevo" : "Editar") usuario</h2>
-    <div class="field"><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre"></div>
-    <div class="field"><label for="Correo">Correo</label><input id="Correo" name="Correo" type="email"></div>
+    <div class="field"><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" maxlength="100" value="@Model.Nombre" required></div>
+    <div class="field"><label for="Correo">Correo</label><input id="Correo" name="Correo" type="email" maxlength="150" value="@Model.Correo" required></div>
     <div class="field">
         <label for="Rol">Rol</label>
-        <select id="Rol" name="Rol"><option>Solicitante</option><option>Soporte</option><option>Administrador</option></select>
+        <select id="Rol" name="Rol">
+            @foreach (var r in Model.Roles)
+            {
+                <option value="@r.Nombre" selected="@(Model.Rol == r.Nombre)">@r.Nombre</option>
+            }
+        </select>
+    </div>
+    <div class="field">
+        <label for="Password">@(id is null ? "Contraseña inicial" : "Nueva contraseña") <small>(mínimo 8 caracteres@(id is null ? "" : "; déjala vacía para no cambiarla"))</small></label>
+        <input id="Password" name="Password" type="password" autocomplete="new-password" minlength="8">
     </div>
     @if (id is not null)
     {
         <div class="field">
             <label for="Activo">Estado</label>
-            <select id="Activo" name="Activo"><option value="true">Activo</option><option value="false">Inactivo</option></select>
+            <select id="Activo" name="Activo"><option value="true" selected="@Model.Activo">Activo</option><option value="false" selected="@(!Model.Activo)">Inactivo</option></select>
         </div>
+        <p class="hint">Un usuario inactivo no puede iniciar sesión; si tiene la sesión abierta, se cierra.</p>
     }
+    <div class="err" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))</div>
     <div class="form-actions"><a class="btn ghost" asp-action="Usuarios">Cancelar</a><button class="btn" type="submit">Guardar</button></div>
 </form>

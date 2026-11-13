@@ -68,6 +68,7 @@ namespace Sistema_Gestión_Citas.Services
                 .Include(t => t.Solicitante)
                 .Include(t => t.Responsable)
                 .Include(t => t.Historial).ThenInclude(h => h.Usuario)
+                .Include(t => t.Evidencias)
                 .AsSplitQuery()
                 .Where(t => t.Id == id);
 
@@ -252,7 +253,7 @@ namespace Sistema_Gestión_Citas.Services
             return Resultado.Ok();
         }
 
-        public async Task<Resultado> ComentarAsync(int id, int actorId, string comentario)
+        public async Task<Resultado> ComentarAsync(int id, int actorId, string comentario, int? soloDelSolicitanteId = null)
         {
             comentario = comentario?.Trim() ?? string.Empty;
             if (comentario.Length == 0)
@@ -261,7 +262,7 @@ namespace Sistema_Gestión_Citas.Services
                 return Resultado.Falla("El comentario admite máximo 4000 caracteres.");
 
             var tiquete = await _db.Tiquetes.FirstOrDefaultAsync(t => t.Id == id);
-            if (tiquete is null)
+            if (tiquete is null || (soloDelSolicitanteId is int sid && tiquete.SolicitanteId != sid))
                 return Resultado.Falla("El tiquete no existe.");
             if (tiquete.Estado == EstadoTiquete.Cerrado)
                 return Resultado.Falla("El tiquete está cerrado y ya no admite comentarios.");
@@ -269,6 +270,43 @@ namespace Sistema_Gestión_Citas.Services
             await GuardarConEventosAsync(tiquete, actorId, new() { (TipoEvento.Comentario, comentario) });
             return Resultado.Ok();
         }
+
+        // ----------------------------------------------------------------------
+        // Solicitante y administración (iteración 3)
+        // ----------------------------------------------------------------------
+
+        public async Task<Resultado> CerrarAsync(int id, int solicitanteId)
+        {
+            var tiquete = await _db.Tiquetes.FirstOrDefaultAsync(t => t.Id == id && t.SolicitanteId == solicitanteId);
+            if (tiquete is null)
+                return Resultado.Falla("El tiquete no existe.");
+            if (!FlujoEstados.EsValida(tiquete.Estado, EstadoTiquete.Cerrado))
+                return Resultado.Falla("Solo puedes cerrar un tiquete que esté en estado «Resuelto».");
+
+            tiquete.Estado = EstadoTiquete.Cerrado;
+            tiquete.FechaCierre = DateTime.Now;
+            await GuardarConEventosAsync(tiquete, solicitanteId, new()
+            {
+                (TipoEvento.CambioEstado, "El solicitante confirmó la solución. Estado cambiado de Resuelto a Cerrado.")
+            });
+            return Resultado.Ok();
+        }
+
+        public async Task<Dictionary<PrioridadTiquete, int>> ContarAbiertosPorPrioridadAsync()
+        {
+            var conteos = await _db.Tiquetes.AsNoTracking()
+                .Where(t => t.Estado != EstadoTiquete.Cerrado && t.Prioridad != null)
+                .GroupBy(t => t.Prioridad!.Value)
+                .Select(g => new { Prioridad = g.Key, Cantidad = g.Count() })
+                .ToListAsync();
+
+            return Enum.GetValues<PrioridadTiquete>().ToDictionary(
+                p => p,
+                p => conteos.FirstOrDefault(c => c.Prioridad == p)?.Cantidad ?? 0);
+        }
+
+        public Task<int> ContarAbiertosAsync() =>
+            _db.Tiquetes.CountAsync(t => t.Estado != EstadoTiquete.Cerrado);
 
         /// <summary>Agrega los eventos al historial, actualiza la fecha de modificación y guarda.</summary>
         private async Task GuardarConEventosAsync(Tiquete tiquete, int actorId, List<(TipoEvento Tipo, string Texto)> eventos)

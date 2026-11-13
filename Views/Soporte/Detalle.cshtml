@@ -17,7 +17,7 @@
     </div>
     <small>Solicitante: @t.Solicitante · Responsable: @(t.Responsable ?? "Sin asignar")</small>
     <div class="sec"><h3>Descripción</h3><div class="box">@t.Descripcion</div></div>
-    @* TODO Iteración 3 (HU-03): lista de evidencias adjuntas *@
+    <partial name="_Evidencias" model="t.Evidencias" />
     @if (!string.IsNullOrWhiteSpace(t.Solucion))
     {
         <div class="sec"><h3>Solución aplicada</h3><div class="box sol">@t.Solucion</div></div>

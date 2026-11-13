@@ -12,6 +12,7 @@ namespace Sistema_Gestión_Citas.Data
         public DbSet<Categoria> Categorias => Set<Categoria>();
         public DbSet<Tiquete> Tiquetes => Set<Tiquete>();
         public DbSet<HistorialTiquete> HistorialTiquetes => Set<HistorialTiquete>();
+        public DbSet<Evidencia> Evidencias => Set<Evidencia>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -81,6 +82,22 @@ namespace Sistema_Gestión_Citas.Data
                 e.HasOne(h => h.Usuario)
                     .WithMany()
                     .HasForeignKey(h => h.UsuarioId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Evidencia>(e =>
+            {
+                e.Property(v => v.NombreOriginal).HasMaxLength(255).IsRequired();
+                e.Property(v => v.NombreArchivo).HasMaxLength(100).IsRequired();
+                e.Property(v => v.TipoContenido).HasMaxLength(100).IsRequired();
+                e.HasIndex(v => v.NombreArchivo).IsUnique();
+                e.HasOne(v => v.Tiquete)
+                    .WithMany(t => t.Evidencias)
+                    .HasForeignKey(v => v.TiqueteId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(v => v.SubidoPor)
+                    .WithMany()
+                    .HasForeignKey(v => v.SubidoPorId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
         }

@@ -44,7 +44,21 @@ namespace Sistema_Gestión_Citas.Services
         /// <summary>Registra la solución y pasa el tiquete de «En progreso» a «Resuelto» (RF-13).</summary>
         Task<Resultado> RegistrarSolucionAsync(int id, int actorId, string solucion);
 
-        /// <summary>Agrega un comentario mientras el tiquete no esté cerrado (RF-06, RF-13).</summary>
-        Task<Resultado> ComentarAsync(int id, int actorId, string comentario);
+        /// <summary>
+        /// Agrega un comentario mientras el tiquete no esté cerrado (RF-06, RF-13).
+        /// Si se indica <paramref name="soloDelSolicitanteId"/>, el tiquete debe pertenecerle (RNF-03).
+        /// </summary>
+        Task<Resultado> ComentarAsync(int id, int actorId, string comentario, int? soloDelSolicitanteId = null);
+
+        // ----- Solicitante y administración (iteración 3) -----
+
+        /// <summary>El solicitante cierra su tiquete cuando está «Resuelto» (RF-07).</summary>
+        Task<Resultado> CerrarAsync(int id, int solicitanteId);
+
+        /// <summary>Cantidad de tiquetes abiertos (no cerrados) por prioridad (RF-16). No incluye los «Sin prioridad».</summary>
+        Task<Dictionary<PrioridadTiquete, int>> ContarAbiertosPorPrioridadAsync();
+
+        /// <summary>Total de tiquetes abiertos (no cerrados).</summary>
+        Task<int> ContarAbiertosAsync();
     }
 }

@@ -1,18 +1,22 @@
-﻿@{
+﻿@model Sistema_Gestión_Citas.Models.ViewModels.CategoriaFormViewModel
+@{
     ViewData["Title"] = "Categoría";
     ViewData["Heading"] = "Administración";
-    int? id = null; // TODO: Model.Id
+    var id = Model.Id;
 }
 <a class="back" asp-action="Categorias">← Volver a categorías</a>
 <form class="card page-narrow" method="post" asp-action="GuardarCategoria" asp-route-id="@id" novalidate>
     <h2 style="margin-bottom:18px">@(id is null ? "Nueva" : "Editar") categoría</h2>
-    <div class="field"><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" maxlength="40"></div>
+    <div class="field"><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" maxlength="80" value="@Model.Nombre" required></div>
+    <div class="field"><label for="Descripcion">Descripción <small>(opcional)</small></label><input id="Descripcion" name="Descripcion" maxlength="250" value="@Model.Descripcion"></div>
     @if (id is not null)
     {
         <div class="field">
             <label for="Activa">Estado</label>
-            <select id="Activa" name="Activa"><option value="true">Activa</option><option value="false">Inactiva</option></select>
+            <select id="Activa" name="Activa"><option value="true" selected="@Model.Activa">Activa</option><option value="false" selected="@(!Model.Activa)">Inactiva</option></select>
         </div>
+        <p class="hint">Una categoría inactiva no se ofrece al crear tiquetes, pero los tiquetes que ya la tienen la conservan.</p>
     }
+    <div class="err" role="alert">@string.Join(" ", ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))</div>
     <div class="form-actions"><a class="btn ghost" asp-action="Categorias">Cancelar</a><button class="btn" type="submit">Guardar</button></div>
 </form>

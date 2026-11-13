@@ -16,7 +16,7 @@
     </div>
     <small>Solicitante: @Model.Solicitante · Responsable: @(Model.Responsable ?? "Sin asignar")</small>
     <div class="sec"><h3>Descripción</h3><div class="box">@Model.Descripcion</div></div>
-    @* TODO Iteración 3 (HU-03): lista de evidencias adjuntas *@
+    <partial name="_Evidencias" model="Model.Evidencias" />
     @if (!string.IsNullOrWhiteSpace(Model.Solucion))
     {
         <div class="sec"><h3>Solución aplicada</h3><div class="box sol">@Model.Solucion</div></div>
@@ -32,9 +32,15 @@
         </div>
     }
 
-    @* Solo si el tiquete no está cerrado (RF-06) *@
+    @* Solo si el tiquete no está cerrado (RF-04, RF-06) *@
     @if (Model.PuedeComentar)
     {
+        <form class="sec" method="post" enctype="multipart/form-data" asp-action="Adjuntar" asp-route-id="@Model.Id">
+            <h3>Adjuntar evidencia <small>(PDF, JPG o PNG, máx. 10 MB)</small></h3>
+            <div class="field"><input type="file" name="Evidencias" multiple accept=".pdf,.jpg,.jpeg,.png" required></div>
+            <button class="btn ghost sm" type="submit">Adjuntar</button>
+        </form>
+
         <form class="sec" method="post" asp-action="Comentar" asp-route-id="@Model.Id">
             <h3>Agregar comentario</h3>
             <div class="field"><textarea name="Comentario" placeholder="Escribe un comentario o seguimiento..." style="min-height:80px"></textarea></div>
