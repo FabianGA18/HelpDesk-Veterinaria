@@ -51,6 +51,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Respuestas de error sin contenido (404, 400 del token, etc.) muestran una página amigable del sistema.
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 app.UseRouting();
 
 app.UseAuthentication();

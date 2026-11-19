@@ -1,0 +1,14 @@
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = ViewData["Titulo"];
+}
+<div class="login-wrap">
+    <div class="login">
+        <div class="brand"><div class="logo" aria-hidden="true">🐾</div></div>
+        <h2>@ViewData["Titulo"]</h2>
+        <p class="sub">@ViewData["Mensaje"]</p>
+        <p class="sub" style="opacity:.7">Código de error: @ViewData["Codigo"]</p>
+        @* La raíz lleva al inicio de sesión o, si ya hay sesión, a la pantalla del rol. *@
+        <a class="btn block" href="~/">Volver al inicio</a>
+    </div>
+</div>
