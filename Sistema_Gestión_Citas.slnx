@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="HelpDesk.Tests/HelpDesk.Tests.csproj" />
   <Project Path="Sistema_Gestión_Citas.csproj" />
 </Solution>

@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- El proyecto de pruebas vive dentro de esta carpeta: no se compila como parte de la app. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);HelpDesk.Tests\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
